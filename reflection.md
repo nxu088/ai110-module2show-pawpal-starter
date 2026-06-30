@@ -6,7 +6,7 @@
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
-Three core actions a user should be able to perform are adding a pet, scheduling a walk, and seeing today's tasks.
+Three core actions a user should be able to perform are adding a pet, scheduling a walk, and seeing today's tasks. The classes I chose were Owner, Pet, Task, and Scheduler. Responsibilities assigned to each were 
 
 **b. Design changes**
 
