@@ -1,0 +1,73 @@
+classDiagram
+    class Frequency {
+        <<enumeration>>
+        ONCE
+        DAILY
+        WEEKLY
+        MONTHLY
+    }
+
+    class Owner {
+        -String ownerId
+        -String name
+        -String email
+        -String phone
+        +addPet(pet: Pet) void
+        +removePet(pet: Pet) void
+        +getPets() List~Pet~
+        +getAllTasks() List~Task~
+        +viewSchedule(scheduler: Scheduler) List~Task~
+    }
+
+    class Pet {
+        -String petId
+        -String name
+        -String species
+        -String breed
+        -int age
+        +addTask(task: Task) void
+        +removeTask(task: Task) void
+        +getTasks() List~Task~
+    }
+
+    class Task {
+        -String taskId
+        -String title
+        -String description
+        -DateTime dueDate
+        -Frequency frequency
+        -bool isCompleted
+        -String priority
+        -int durationMinutes
+        -object _onComplete
+        +complete() void
+        +reschedule(newDate: DateTime) void
+        +isOverdue() bool
+    }
+
+    class Scheduler {
+        -dict _registry
+        +scheduleTask(task: Task, pet: Pet) void
+        +cancelTask(task: Task) void
+        +completeTask(task: Task) void
+        +getTasks(pet: Pet, completed: bool) List~Task~
+        +filterTasks(petName: str, completed: bool) List~Task~
+        +sortByTime(tasks: List~Task~, reverse: bool) List~Task~
+        +getUpcomingTasks() List~Task~
+        +getTasksForPet(pet: Pet) List~Task~
+        +getOverdueTasks() List~Task~
+        +hasConflict(task: Task, pet: Pet) bool
+        +checkConflict(task: Task, pet: Pet) str
+        +getAllConflicts() List~str~
+        +suggestNextSlot(task: Task, pet: Pet) DateTime
+        -_autoReschedule(task: Task) void
+    }
+
+    Owner "1" *-- "0..*" Pet : owns
+    Pet "1" o-- "0..*" Task : has
+    Scheduler "1" --> "0..*" Task : manages
+    Scheduler "1" --> "0..*" Pet : tracks via registry
+    Scheduler ..> Task : wires _onComplete callback
+    Owner ..> Scheduler : uses
+    Task --> Frequency : has
+    Scheduler ..> Frequency : uses
