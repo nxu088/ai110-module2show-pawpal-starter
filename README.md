@@ -80,17 +80,33 @@ Sample test output:
 ```
 # Paste your pytest output here
 ```
+=========================================================== test session starts ============================================================
+platform win32 -- Python 3.14.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\nxu08\Documents\ai110-module2show-pawpal-starter
+plugins: anyio-4.13.0, cov-7.1.0
+collected 19 items                                                                                                                          
 
+tests\test_pawpal py ...................                                                                                              [100%]
+
+============================================================== tests coverage ==============================================================
+_____________________________________________ coverage: platform win32, python 3.14.3-final-0 ______________________________________________
+
+Name               Stmts   Miss  Cover
+--------------------------------------
+pawpal_system.py     155     50    68%
+--------------------------------------
+TOTAL                155     50    68%
+============================================================ 19 passed in 0.27s ============================================================
 ## 📐 Smarter Scheduling
 
 > Fill in once you've implemented scheduling logic.
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting|Scheduler.sort_by_time()|priority|
+| Filtering|Scheduler.filter_tasks()| filtering tasks by each pet|
+| Conflict handling|Scheduler.check_conflict()| checking for overlapping time slots|
+| Recurring tasks| Scheduler._autoreschedule()| automatic based on given time|
 
 ## 📸 Demo Walkthrough
 

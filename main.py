@@ -68,10 +68,6 @@ section("Lambda sort key: sorting HH:MM time strings")
 
 time_strings = ["09:30", "07:00", "14:15", "08:00", "09:00"]
 
-# Problem: plain alphabetical sort works accidentally for these, but breaks
-# the moment hours have different digit counts (e.g. "9:00" vs "14:00").
-# A lambda key makes the intent explicit and handles any formatting.
-
 # Key idea: split "HH:MM" into (hours, minutes) as integers, return a tuple.
 # sorted() compares tuples element-by-element: hours first, minutes as tiebreak.
 by_time = sorted(time_strings, key=lambda s: (int(s.split(":")[0]),
@@ -102,29 +98,6 @@ for t in sorted(tasks_raw, key=lambda d: (int(d["time"].split(":")[0]),
 # sort_by_time() uses task.due_date (a datetime object) instead of a string,
 # so the key becomes: lambda t: (t.due_date, priority_rank)
 # — same idea, richer object as the source.
-
-# ── timedelta walkthrough ────────────────────────────────────────────────────
-# timedelta represents a fixed duration. Adding it to a datetime shifts the
-# date forward by exactly that amount — no calendar edge-case math needed.
-section("timedelta: how next due dates are calculated")
-
-base = now.replace(hour=8, minute=0)   # pretend a task is due at 08:00 today
-
-daily_delta   = timedelta(days=1)
-weekly_delta  = timedelta(weeks=1)
-monthly_delta = timedelta(days=30)
-
-print(f"  Original due date  : {base:%Y-%m-%d %H:%M}")
-print(f"  + timedelta(days=1): {base + daily_delta:%Y-%m-%d %H:%M}  <-- daily next")
-print(f"  + timedelta(weeks=1): {base + weekly_delta:%Y-%m-%d %H:%M}  <-- weekly next")
-print(f"  + timedelta(days=30): {base + monthly_delta:%Y-%m-%d %H:%M}  <-- monthly next")
-
-# The scheduler uses exactly this formula inside _auto_reschedule:
-#   next_task.due_date = task.due_date + _FREQUENCY_DELTA[task.frequency]
-print()
-print("  Chaining multiple days forward (what preview_recurring does):")
-for i in range(1, 4):
-    print(f"    day +{i}: {base + timedelta(days=i):%Y-%m-%d %H:%M}")
 
 # ── Conflict detection ───────────────────────────────────────────────────────
 # Run BEFORE any complete() calls so tasks are still active and detectable.
@@ -225,7 +198,6 @@ section("3. sort_by_time(reverse=True) — latest first")
 for t in scheduler.sort_by_time(reverse=True):
     print(f"  {t.due_date:%H:%M}  [{t.priority:<6}]  {t.title}")
 
-
 # ── 2. filter_tasks ─────────────────────────────────────────────────────────
 section("4. filter_tasks(pet_name='Buddy') — all Buddy tasks")
 for t in scheduler.filter_tasks(pet_name="Buddy"):
@@ -248,7 +220,6 @@ section("8. filter_tasks(pet_name='buddy', completed=False) — case-insensitive
 for t in scheduler.filter_tasks(pet_name="buddy", completed=False):
     print(f"  {t.due_date:%H:%M}  [{t.priority:<6}]  {t.title}")
 
-
 # ── 3. Conflict detection ────────────────────────────────────────────────────
 section("9. Conflict detection + slot suggestion")
 probe = Task("t99", "Agility Training", "Obstacle course",
@@ -258,7 +229,6 @@ if scheduler.check_conflict(probe, buddy) is not None:
     slot = scheduler.suggest_next_slot(probe, buddy)
     print(f"  '{probe.title}' at 09:10 conflicts with Buddy's 09:00 Grooming.")
     print(f"  Next free slot: {slot:%H:%M}")
-
 
 # ── 4. Recurring preview ─────────────────────────────────────────────────────
 section("10. preview_recurring — Whiskers' Feeding (next 5 days)")
